@@ -19,3 +19,13 @@ class BreakoutSignal(BaseModel):
     volume_ratio: float
     signal: str
     data_source: str
+
+class MomentumSignal(BaseModel):
+    symbol: str
+    company_name: str
+    price: float
+    change_percent: float
+    volume_ratio: float
+    momentum_score: float
+    signal: str
+    data_source: str

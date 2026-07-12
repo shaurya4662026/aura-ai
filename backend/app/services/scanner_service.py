@@ -1,5 +1,6 @@
 from app.models.scanner import (
     BreakoutSignal,
+    MomentumSignal,
     StockSnapshot,
 )
 
@@ -85,3 +86,39 @@ def scan_breakouts(
             signals.append(BreakoutSignal(**signals_data))
 
     return signals
+
+
+def scan_momentum(
+        minimum_change_percent: float = 1.0,
+        minimum_volume_ratio: float = 1.2,
+) -> list[MomentumSignal]:
+    signals: list[MomentumSignal] = []
+
+    for stock in get_demo_stocks():
+        has_price_momentum = (
+            stock.change_percent >= minimum_change_percent
+        )
+        has_volume_support = (
+            stock.volume_ratio >= minimum_volume_ratio
+        )
+
+        if has_price_momentum and has_volume_support:
+            momentum_score = (
+                stock.change_percent * 0.6
+                + stock.volume_ratio * 0.4
+            )
+
+            signals.append(
+                MomentumSignal(
+                    symbol=stock.symbol,
+                    company_name=stock.company_name,
+                    price=stock.price,
+                    change_percent=stock.change_percent,
+                    volume_ratio=stock.volume_ratio,
+                    momentum_score=round(momentum_score, 2),
+                    signal="momentum_candidate",
+                    data_source=stock.data_source,
+                )
+            )
+
+        return signals
