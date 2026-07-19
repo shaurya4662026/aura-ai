@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
@@ -7,10 +8,15 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
-DATABASE_URL = "sqlite:///./aura_ai.db"
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATABASE_PATH = BASE_DIR / "aura_ai.db"
+DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+
 
 class Base(DeclarativeBase):
     pass
+
 
 engine = create_engine(
     DATABASE_URL,
@@ -19,16 +25,18 @@ engine = create_engine(
     },
 )
 
+
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
     autocommit=False,
 )
 
+
 def get_db() -> Generator[Session, None, None]:
     database = SessionLocal()
 
-    try: 
+    try:
         yield database
     finally:
         database.close()

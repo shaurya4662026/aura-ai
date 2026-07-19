@@ -17,7 +17,6 @@ app = FastAPI(
 
 create_database_tables()
 
-
 app.include_router(breeze_router)
 app.include_router(market_router)
 app.include_router(risk_router)
